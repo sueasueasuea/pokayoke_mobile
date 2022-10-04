@@ -7,24 +7,28 @@ import History from './src/pages/History'
 import Home from './src/pages/Home'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Provider as PaperProvider } from 'react-native-paper';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginByNFC"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="LoginByNFC" component={LoginByNFC} />
-        <Stack.Screen name="LoginByID" component={LoginByID} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="History" component={History} />
+    <PaperProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="LoginByNFC"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="LoginByNFC" component={LoginByNFC} />
+          <Stack.Screen name="LoginByID" component={LoginByID} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="History" component={History} />
 
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   )
 }
 

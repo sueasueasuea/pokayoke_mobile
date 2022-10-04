@@ -13,13 +13,14 @@ import nfcManager, { NfcEvents } from 'react-native-nfc-manager';
 
 import React, { useState, useEffect } from 'react';
 import { customStyles } from '../styles';
-import { Button } from "@react-native-material/core";
+import { Button } from 'react-native-paper';
 
 
 
 export default function LoginByNFC({ navigation }) {
   const [nfcData, setNfcData] = useState();
-  const [typeLogin, setTypeLogin] = useState('nfc');
+  
+
 
   useEffect(() => {
     nfcManager.isSupported().then(supported => {
@@ -47,22 +48,24 @@ export default function LoginByNFC({ navigation }) {
   return (
     <View style={customStyles.loginContainer}>
 
-      <View style={{ flex: 1, alignItems: 'center' ,}}>
+      <View style={{ flex: 1, alignItems: 'center', }}>
 
         <Image
           style={{
-            flex:1,
-            resizeMode:'contain'
+            flex: 1,
+            resizeMode: 'contain'
 
           }}
           source={require('../assets/icons/icon.png')}
         />
-        
+
       </View>
-      <View style={{ flex: 1 ,alignItems: 'center'}}>
+      <View style={{ flex: 1, alignItems: 'center' }}>
         <Text style={{ ...customStyles.header2TextStyle, marginTop: '5%', marginBottom: '5%' }}>สแกนบัตรพนักงาน</Text>
 
-        <Button onPress={() => navigation.navigate('LoginByID')} style={{}} variant='outlined' title={'เข้าสู่ระบบ'} color='black' titleStyle={customStyles.regularTextStyle} />
+        <Button onPress={() => navigation.navigate('LoginByID')} style={{}} mode='outlined' color='black' titleStyle={customStyles.regularTextStyle} >
+          เข้าสู่ระบบ
+        </Button>
       </View>
       <View style={{ flex: 3, }}>
 
