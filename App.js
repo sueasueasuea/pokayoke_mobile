@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as PaperProvider } from 'react-native-paper';
 import TokenContextProvider from './src/store/TokenContext';
 import LoadingContextProvider from './src/store/LoadingContext';
+import AuthContextProvider from './src/store/AuthContext';
 
 const Stack = createStackNavigator();
 
@@ -18,24 +19,26 @@ export default function App() {
   return (
     <TokenContextProvider>
       <LoadingContextProvider>
-        <PaperProvider>
+        <AuthContextProvider>
+          <PaperProvider>
 
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="LoginByNFC"
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="LoginByNFC"
+                screenOptions={{
+                  headerShown: false,
+                }}
+              >
 
-              <Stack.Screen name="LoginByNFC" component={LoginByNFC} />
-              <Stack.Screen name="LoginByID" component={LoginByID} />
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="History" component={History} />
+                <Stack.Screen name="LoginByNFC" component={LoginByNFC} />
+                <Stack.Screen name="LoginByID" component={LoginByID} />
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="History" component={History} />
 
-            </Stack.Navigator>
-          </NavigationContainer>
+              </Stack.Navigator>
+            </NavigationContainer>
 
-        </PaperProvider>
+          </PaperProvider>
+        </AuthContextProvider>
       </LoadingContextProvider>
     </TokenContextProvider>
 

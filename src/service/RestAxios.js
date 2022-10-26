@@ -14,3 +14,5 @@
 
 // };
 
+const baseUrl = 'https://asvanmfg02.siamkubota.co.th/pokayoke';
+

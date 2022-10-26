@@ -1,13 +1,19 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { customStyles } from '../styles'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function Content({title,content}) {
+function Content({ menus }) {
+    console.log(JSON.stringify(menus));
     return (
         <View style={customStyles.contentContainer}>
-            <Text>{title}</Text>
-            <Text>{content}</Text>
+            {
+                menus.map((menu) => {
+                    return (<TouchableOpacity key={menu.id} style={customStyles.menuContainer}> 
+                    <Text style={customStyles.regularTextStyle}>{menu.menu_name}</Text><Icon size={50} name={menu.icon_name}/></TouchableOpacity>)
 
+                })
+            }
         </View>
     )
 }

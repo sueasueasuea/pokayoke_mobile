@@ -3,68 +3,7 @@ import {
   Image,
   Text,
 } from 'react-native'
-import axios from 'axios';
-const baseUrl = 'https://asvanmfg02.siamkubota.co.th/pokayoke';
-const sslBaseUrl = 'https://asvanmfg02:444/pokayoke'
-const userCenUrl = 'https://p701apsi01-la01skc.azurewebsites.net/skcapi'
-
-
-// Passing configuration object to axios
-const fetchToken = async () => {
-  const configurationObject = {
-    method: 'post',
-    url: `${userCenUrl}/token`,
-    data: {
-      "UserName": USER_DB_USERNAME,
-      "Password": USER_DB_PASSWORD
-    }
-  };
-  axios(configurationObject).then((response) => {
-    console.log(JSON.stringify(response.data));
-  }).catch((err) => {
-    console.log(JSON.stringify(err));
-  })
-
-};
-
-const agent = new https.Agent({
-  rejectUnauthorized: false,
-  
-}); 
-
-const fetchItemConfig = async () => {
-  const configurationObject = {
-    method: 'get',
-    url: `${sslBaseUrl}/itemconfig`,
-    httpsAgent:agent
-  };
-  axios(configurationObject).then((response) => {
-    console.log(JSON.stringify(response.data));
-  }).catch((err) => {
-    console.log(JSON.stringify(err));
-  })
-
-};
-
-
-const fetchUser = async () => {
-  const configurationObject = {
-    headers: {
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUG9rYXlva2UiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY2NjA5MTU0MywiaXNzIjoiaHR0cHM6Ly9wNzAxYXBzaTAxLWxhMDFza2MuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL3A3MDFhcHNpMDEtbGEwMXNrYy5henVyZXdlYnNpdGVzLm5ldCJ9._UL_8fAYTrMyPN2Q0550MX974hJ_sVBzuIOpBkFb8r0',
-    },
-    method: 'post',
-    url: `${userCenUrl}/empsearch`,
-    data: {
-      "Keyword":"425BB409"
-    }
-  };
-  axios(configurationObject).then((response) => {
-    console.log(JSON.stringify(response.data));
-  }).catch((err) => {
-    console.log(JSON.stringify(err));
-  })
-
-};
+import {UserCenterAxios} from '../service/UserCenterAxios'
 
 import nfcManager, { NfcEvents } from 'react-native-nfc-manager';
 
@@ -72,28 +11,28 @@ import React, { useState, useEffect } from 'react';
 import { customStyles } from '../styles';
 import { Button } from 'react-native-paper';
 
-// import axios from '../service/UserCenterAxios';
-
 import { USER_DB_USERNAME, USER_DB_PASSWORD } from '@env'
 import { useTokenContext } from '../store/TokenContext';
 import { useLoadingContext } from '../store/LoadingContext';
+import { useAuthContext } from '../store/AuthContext';
 import LoadingFullScreen from '../components/Loading';
-// import { fetchUser } from '../service/RestAxios';
+
 
 export default function LoginByNFC({ navigation }) {
   const [nfcData, setNfcData] = useState();
   const { accessToken, setAccToken } = useTokenContext();
   const { refreshToken, setRefToken } = useTokenContext();
   const { isLoading, setIsLoading } = useLoadingContext();
+  const {userData, setUserData} =useAuthContext();
 
   async function getTokenUserApi() {
 
     try {
       setIsLoading(true)
-      const { data } = await axios
+      const { data } = await UserCenterAxios
         .post('/token', {
           "UserName": USER_DB_USERNAME,
-          "Password": USER_DB_PASSWORD
+          "Password": USER_DB_PASSWORD 
         })
       console.log(JSON.stringify(data));
       setAccToken(data.accessToken)
@@ -113,15 +52,25 @@ export default function LoginByNFC({ navigation }) {
   async function getProfileUser(id) {
     try {
       setIsLoading(true)
-      const { data } = await axios({
+      const { data } = await UserCenterAxios({
         // url of the api endpoint (can be changed)
         url: `/empsearch`,
         method: "POST",
         data: {
-          "Keyword": id
+          "Keyword": '425BB409'
         },
       })
+      let temp = data[0]
+      if(data.message === "Not found result"){
 
+      }else {
+        console.log('gsfs',data);
+        setUserData({
+          empNo:temp.eid,name:`${temp.nameTH} ${temp.lastnameTH}`,img:temp.picture_url
+      },navigation.navigate('Home',{img:temp.picture_url}))
+        
+      }
+      
       console.log(JSON.stringify(data));
 
 
@@ -129,9 +78,11 @@ export default function LoginByNFC({ navigation }) {
 
     } catch (error) {
       console.log(JSON.stringify(error));
+     
     }
     finally {
       setIsLoading(false)
+      
     }
   }
 
@@ -159,15 +110,15 @@ export default function LoginByNFC({ navigation }) {
   }, [nfcManager])
 
   useEffect(() => {
-    fetchToken()
-    fetchUser()
-    fetchItemConfig()
-    //getTokenUserApi()
+    // fetchToken()
+    // fetchUser()
+    //fetchItemConfig()
+    getTokenUserApi()
   }, [])
 
-  // useEffect(() => {
-  //   getProfileUser(nfcData?.id)
-  // }, [nfcData])
+  useEffect(() => {
+    getProfileUser(nfcData?.id)
+  }, [nfcData])
 
   return (
     <View style={customStyles.loginContainer}>
@@ -193,7 +144,7 @@ export default function LoginByNFC({ navigation }) {
         <Button onPress={() => navigation.navigate('LoginByID')} style={{}} mode='outlined' color='black' titleStyle={customStyles.regularTextStyle} >
           เข้าสู่ระบบด้วยเลขพนักงาน
         </Button>
-        {nfcData ? <Text>{nfcData?.id ?? "ไม่มี id"}</Text> : null}
+        
       </View>
       <View style={{ flex: 3, }}>
 
@@ -218,4 +169,4 @@ export default function LoginByNFC({ navigation }) {
 
 //<Content title={"NFC Tag ID"} content={nfcData?.id?? "No tag id or No Tag scanning"} />
 
-
+//{nfcData ? <Text>{nfcData?.id ?? "ไม่มี id"}</Text> : null}

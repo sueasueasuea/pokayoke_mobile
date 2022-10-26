@@ -4,14 +4,25 @@ export const customStyles = StyleSheet.create({
     HeaderContainer: {
         flex: 1,
         backgroundColor: "#778A35",
-        alignItems: 'center',
-        justifyContent: 'center'
+        flexDirection:'row',
+        
     },
     contentContainer: {
         flex: 8,
         backgroundColor: "#D1E2C4",
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    menuContainer: {
+
+        width:'50%',
+        height:'40%',
+        margin:'5%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor:'#EBEBE8',
+        borderRadius:5,
+        borderWidth:2
     },
     footerContainer: {
         flex: 1,

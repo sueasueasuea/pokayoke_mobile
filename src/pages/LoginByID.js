@@ -7,20 +7,51 @@ import { TextInput, Button } from 'react-native-paper';
 import { size } from '../helpers/getSize'
 
 import { useState, useEffect } from 'react';
+import { useLoadingContext } from '../store/LoadingContext';
+import { UserCenterAxios } from '../service/UserCenterAxios'
+import { useAuthContext } from '../store/AuthContext';
 
 
 
 export default function LoginByID({ navigation }) {
     const [idEmp, setIdEmp] = useState("");
     const [idPerson, setIdPerson] = useState("");
+    const { isLoading, setIsLoading } = useLoadingContext();
+    const { userData, setUserData } = useAuthContext();
 
-    function loginID(params) {
 
+    async function loginID(idEmp, idPerson) {
+        let trimIdE = idEmp.trim()
+        let trimIdP = idPerson.trim()
+        try {
+            setIsLoading(true)
+            const { data } = await UserCenterAxios
+                .get(`/empid/${trimIdE}`)
+            console.log(JSON.stringify(data));
+            let temp = data[0]
+            if (data.message === "Not found employee") {
+
+            }
+
+            if (temp.personal_Id.substring(7, 13) == trimIdP) {
+                console.log('correct');
+                setUserData({
+                    empNo: temp.eid, name: `${temp.nameTH} ${temp.lastnameTH}`, img: temp.picture_url
+                }, navigation.navigate('Home', { img: temp.picture_url }))
+            }
+
+
+        } catch (error) {
+
+        }
+        finally {
+            setIsLoading(false)
+        }
     }
 
     return (
         <View style={customStyles.loginContainer}>
-            <View style={{ flex: 1, alignItems: 'center',justifyContent:'center' }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',  }}>
                 <Image
                     style={{
                         flex: 0.5,
@@ -36,7 +67,7 @@ export default function LoginByID({ navigation }) {
                 </TextInput.Icon>} right={<TextInput.Icon name="close" onPress={() => { setIdEmp('') }}>
 
                 </TextInput.Icon>}
-                    mode='outlined' label="รหัสพนักงาน" value={idEmp} maxLength={7} onChangeText={text => setIdEmp(text)} style={{ width: '90%', }} />
+                   mode='outlined' label="รหัสพนักงาน" value={idEmp} maxLength={8} onChangeText={text => setIdEmp(text)} style={{ width: '90%', }}  />
 
 
                 <TextInput left={<TextInput.Icon name="lock" >
@@ -46,9 +77,9 @@ export default function LoginByID({ navigation }) {
                 </TextInput.Icon>}
                     mode='outlined' label="บัตรประชาชน 6 ตัวท้าย" value={idPerson} maxLength={6} onChangeText={text => setIdPerson(text)} keyboardType={'number-pad'} style={{ width: '90%' }} />
             </View>
-            <View style={{ flex: 1, alignItems: 'center' }}>
-                <Button onPress={() => loginID(idEmp, idPerson)} mode="contained" >เข้าสู่ระบบ</Button>
-                <Button onPress={() => navigation.navigate('LoginByNFC')} style={{}} mode="outlined" color='black'  >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                <Button style={{margin:'5%' }} onPress={() => loginID(idEmp, idPerson)} mode="contained" >เข้าสู่ระบบ</Button>
+                <Button style={{margin:'5%' }} onPress={() => navigation.navigate('LoginByNFC')}  mode="outlined" color='black'  >
                     สแกนบัตรพนักงาน
                 </Button>
             </View>
