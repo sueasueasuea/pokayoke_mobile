@@ -3,13 +3,16 @@ import { View, Text, Image,TouchableOpacity } from 'react-native'
 import { customStyles } from '../styles'
 import { useAuthContext } from '../store/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { useChoiceContext } from '../store/ChoiceContext';
 
 
 
 function Header({ img ,navigation}) {
     const { userData,setUserData } = useAuthContext();
+    const { choice,setChoice } = useChoiceContext()
+
     function logout () {
+        setChoice({BR:'',SS:''})
         setUserData({empNo:'',name:'',img:''})
         navigation.navigate('LoginByNFC')
     }

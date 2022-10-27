@@ -1,16 +1,16 @@
-import { View, Image } from 'react-native'
+import { View, Image, } from 'react-native'
 import React from 'react'
 import { customStyles } from '../styles'
 import Footer from '../components/Footer'
 import { TextInput, Button } from 'react-native-paper';
 
-import { size } from '../helpers/getSize'
+import { height_divide4,width_divide4 } from '../helpers/getSize'
 
-import { useState, useEffect } from 'react';
+import { useState,useEffect  } from 'react';
 import { useLoadingContext } from '../store/LoadingContext';
 import { UserCenterAxios } from '../service/UserCenterAxios'
 import { useAuthContext } from '../store/AuthContext';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 
 export default function LoginByID({ navigation }) {
@@ -18,7 +18,7 @@ export default function LoginByID({ navigation }) {
     const [idPerson, setIdPerson] = useState("");
     const { isLoading, setIsLoading } = useLoadingContext();
     const { userData, setUserData } = useAuthContext();
-
+    
 
     async function loginID(idEmp, idPerson) {
         let trimIdE = idEmp.trim()
@@ -50,12 +50,13 @@ export default function LoginByID({ navigation }) {
     }
 
     return (
-        <View style={customStyles.loginContainer}>
+        <KeyboardAwareScrollView style={customStyles.loginContainer}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',  }}>
                 <Image
                     style={{
-                        flex: 0.5,
-                        resizeMode: 'contain'
+                       width:width_divide4,
+                       height:height_divide4,
+                       resizeMode : 'center'
 
                     }}
                     source={require('../assets/icons/icon.png')}
@@ -67,7 +68,7 @@ export default function LoginByID({ navigation }) {
                 </TextInput.Icon>} right={<TextInput.Icon name="close" onPress={() => { setIdEmp('') }}>
 
                 </TextInput.Icon>}
-                   mode='outlined' label="รหัสพนักงาน" value={idEmp} maxLength={8} onChangeText={text => setIdEmp(text)} style={{ width: '90%', }}  />
+                mode='outlined' label="รหัสพนักงาน" value={idEmp} maxLength={8} onChangeText={text => setIdEmp(text)} style={{ width: '90%', }}  />
 
 
                 <TextInput left={<TextInput.Icon name="lock" >
@@ -75,7 +76,7 @@ export default function LoginByID({ navigation }) {
                 </TextInput.Icon>} right={<TextInput.Icon name="close" onPress={() => { setIdPerson('') }}>
 
                 </TextInput.Icon>}
-                    mode='outlined' label="บัตรประชาชน 6 ตัวท้าย" value={idPerson} maxLength={6} onChangeText={text => setIdPerson(text)} keyboardType={'number-pad'} style={{ width: '90%' }} />
+                   onSubmitEditing={()=>loginID(idEmp, idPerson)} mode='outlined' label="บัตรประชาชน 6 ตัวท้าย" value={idPerson} maxLength={6} onChangeText={text => setIdPerson(text)} keyboardType={'number-pad'} style={{ width: '90%' }} />
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
                 <Button style={{margin:'5%' }} onPress={() => loginID(idEmp, idPerson)} mode="contained" >เข้าสู่ระบบ</Button>
@@ -85,7 +86,7 @@ export default function LoginByID({ navigation }) {
             </View>
 
 
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
 
