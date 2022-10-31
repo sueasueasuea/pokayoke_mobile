@@ -46,7 +46,7 @@ instance.interceptors.request.use(async (config) => {
   //     config.headers.Authorization = 'Bearer ' + accessToken
   // }
   config.headers.Authorization = 'Bearer ' + accessToken;
-  console.log('after configs' + JSON.stringify(config));
+  //console.log('after configs' + JSON.stringify(config));
   return config;
 });
 

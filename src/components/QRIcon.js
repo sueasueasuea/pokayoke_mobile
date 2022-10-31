@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 function QRIcon({qrData}) {
     return (
-        <View style={{flex:1,borderWidth:1,flexDirection:'row',alignItems:'center'}}>
+        <View style={{flex:1,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
             <Icon name={"qrcode"} size={50}></Icon>
             <Text>{qrData}</Text>
         </View>

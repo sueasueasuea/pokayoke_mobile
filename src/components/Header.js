@@ -12,8 +12,8 @@ function Header({ img ,navigation}) {
     const { choice,setChoice } = useChoiceContext()
 
     function logout () {
-        setChoice({BR:'',SS:''})
-        setUserData({empNo:'',name:'',img:''})
+        // setChoice({BR:'',SS:''})
+        // setUserData({empNo:'',name:'',img:''})
         navigation.navigate('LoginByNFC')
     }
     return (
