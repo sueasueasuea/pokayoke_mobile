@@ -1,4 +1,6 @@
 import axios from 'axios';
+import SweetAlert from 'react-native-sweet-alert-best';
+
 const baseUrl = 'https://asvanmfg02.siamkubota.co.th:444/pokayoke';
 
 const instance = axios.create({
@@ -18,6 +20,33 @@ instance.interceptors.response.use(function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     //console.log('res'+JSON.stringify(response));
+    // if(response.data.OK)
+    // {
+    //     SweetAlert.showAlertWithOptions({
+    //         title: 'OK',
+    //         subTitle: '',
+    //         confirmButtonTitle: 'OK',
+    //         confirmButtonColor: '#000',
+    //         style: 'success',
+    //         cancellable: true
+    //       },
+    //         callback => console.log('OK from swal'));
+    // }
+
+    if(response.data.NG)
+    {
+        SweetAlert.showAlertWithOptions({
+            title: 'NG',
+            subTitle: response.data.NG,
+            confirmButtonTitle: 'OK',
+            confirmButtonColor: '#000',
+            otherButtonTitle: 'Cancel',
+            otherButtonColor: '#dedede',
+            style: 'error',
+            cancellable: true
+          },
+            callback => console.log('NG from swal'));
+    }
     return response;
 }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
@@ -28,6 +57,7 @@ instance.interceptors.response.use(function (response) {
         {
             console.log();
         }
+        
     }
 
     // console.log(JSON.stringify(error));

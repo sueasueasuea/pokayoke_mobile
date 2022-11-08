@@ -57,7 +57,7 @@ export default function LoginByNFC({ navigation }) {
         url: `/empsearch`,
         method: "POST",
         data: {
-          "Keyword": '425BB409'
+          "Keyword": `${id}`
         },
       })
       let temp = data[0]

@@ -2,12 +2,12 @@
 import React from 'react'
 import Footer from '../components/Footer'
 import Content from '../components/Content'
-import { subchoices } from '../constants/Menu'
+import { choices } from '../constants/Menu'
 
 function SSChocie({navigation}) {
     return (
         <>
-            <Content menus={subchoices} navigation={navigation} />
+            <Content menus={choices} navigation={navigation} />
             <Footer />
         </>
     )

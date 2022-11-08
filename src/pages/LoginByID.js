@@ -1,5 +1,5 @@
 import { View, Image, } from 'react-native'
-import React from 'react'
+import React,{ useRef} from 'react'
 import { customStyles } from '../styles'
 import Footer from '../components/Footer'
 import { TextInput, Button } from 'react-native-paper';
@@ -18,7 +18,8 @@ export default function LoginByID({ navigation }) {
     const [idPerson, setIdPerson] = useState("");
     const { isLoading, setIsLoading } = useLoadingContext();
     const { userData, setUserData } = useAuthContext();
-    
+    const firstInput = useRef();
+    const secondInput = useRef();
 
     async function loginID(idEmp, idPerson) {
         let trimIdE = idEmp.trim()
@@ -68,7 +69,7 @@ export default function LoginByID({ navigation }) {
                 </TextInput.Icon>} right={<TextInput.Icon name="close" onPress={() => { setIdEmp('') }}>
 
                 </TextInput.Icon>}
-                mode='outlined' label="รหัสพนักงาน" value={idEmp} maxLength={8} onChangeText={text => setIdEmp(text)} style={{ width: '90%', }}  />
+                mode='outlined' ref={firstInput} returnKeyType={'next'} onSubmitEditing={()=>secondInput.current.focus()} label="รหัสพนักงาน" value={idEmp} maxLength={8} onChangeText={text => setIdEmp(text)} style={{ width: '90%', }}  />
 
 
                 <TextInput left={<TextInput.Icon name="lock" >
@@ -76,7 +77,7 @@ export default function LoginByID({ navigation }) {
                 </TextInput.Icon>} right={<TextInput.Icon name="close" onPress={() => { setIdPerson('') }}>
 
                 </TextInput.Icon>}
-                   onSubmitEditing={()=>loginID(idEmp, idPerson)} mode='outlined' label="บัตรประชาชน 6 ตัวท้าย" value={idPerson} maxLength={6} onChangeText={text => setIdPerson(text)} keyboardType={'number-pad'} style={{ width: '90%' }} />
+                 mode='outlined' ref={secondInput} onSubmitEditing={()=>loginID(idEmp, idPerson)} label="บัตรประชาชน 6 ตัวท้าย" value={idPerson} maxLength={6} onChangeText={text => setIdPerson(text)} keyboardType={'number-pad'} style={{ width: '90%' }} />
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
                 <Button style={{margin:'5%' }} onPress={() => loginID(idEmp, idPerson)} mode="contained" >เข้าสู่ระบบ</Button>

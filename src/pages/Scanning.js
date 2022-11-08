@@ -1,4 +1,4 @@
-import { View, TextInput, Text, FlatList } from 'react-native'
+import { View, TextInput, Text, FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { useChoiceContext } from '../store/ChoiceContext';
 import { customStyles } from '../styles';
@@ -11,6 +11,10 @@ import QRIcon from '../components/QRIcon';
 import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext'
 import { DATA } from '../constants/DataHeader'
+import { toDate } from '../helpers/ToDate'
+import Table from 'react-native-simple-table'
+import SweetAlert from 'react-native-sweet-alert-best';
+
 
 
 function Scanning({ navigation }) {
@@ -32,6 +36,7 @@ function Scanning({ navigation }) {
   useEffect(() => {
     getItemNoConfig()
     getLastScanned()
+
   }, [])
 
 
@@ -72,13 +77,21 @@ function Scanning({ navigation }) {
 
   function qrProcess() {
     //location QR
-    console.log('' + temp.charAt(0) + "wtf :" + fullLengthQR);
-    if (temp.length !== fullLengthQR) {
+    //console.log('' + temp.charAt(0) + "wtf :" + fullLengthQR);
+    if (temp.length < fullLengthQR) {
+      if (temp) {
+        if (temp.length > 4) {
+          setQr2Nocut(temp)
+          let transQR = transform(temp, "location")
+          setQrData2(transQR)
+          console.log('do locationQR single');
+        } else {
+          setQr2Nocut(temp)
+          setQrData2(temp)
+          console.log('do locationQR mix');
+        }
+      }
 
-      setQr2Nocut(temp)
-      let transQR = transform(temp, "location")
-      setQrData2(transQR)
-      console.log('do locationQR');
     } else {
       //tag QR
       setQr1Nocut(temp)
@@ -131,9 +144,35 @@ function Scanning({ navigation }) {
           "actionType": choice.SS
         })
       console.log(JSON.stringify(data));
+     
+      if (status === 'NG') {
+        SweetAlert.showAlertWithOptions({
+          title: status,
+          subTitle: 'ผิด Location',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'error',
+          cancellable: true
+        },
+          callback => console.log('NG from single'));
+      }
 
-
-
+      else if (status=== 'OK'){
+        SweetAlert.showAlertWithOptions({
+          title: status,
+          
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'success',
+          cancellable: true
+        },
+          callback => console.log('OK from single'));
+      }
+        
+      
+    getLastScanned()
+    setQrData1('waiting to scan...')
+    setQrData2('waiting to scan...')
 
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -156,12 +195,15 @@ function Scanning({ navigation }) {
           "actionType": choice.SS
         })
       console.log(JSON.stringify(data));
-      if (data?.NG) {
-        alert(data.NG)
-      }
-
-
-
+      // if (data?.NG) {
+      //   alert(data.NG)
+      // }
+      // if (data?.OK){
+      //   alert(data.OK)
+      // }
+      getLastScanned()
+      setQrData1('waiting to scan...')
+      setQrData2('waiting to scan...')
 
     } catch (error) {
       console.log(JSON.stringify('mix error' + error.message));
@@ -196,39 +238,38 @@ function Scanning({ navigation }) {
     }
   }
 
-  function renderItem({ item }) {
-    return (
-      <View style={{ alignItems: 'center', justifyContent: 'center', height: '10%', flexDirection: 'row' }}>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.createdDate}</Text>
-        </View>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.resultStatus}</Text>
-        </View>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.qrTag}</Text>
-        </View>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.qrLocation}</Text>
-        </View>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.tagItemNo}</Text>
-        </View>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.locationItemNo}</Text>
-        </View>
-        <View style={{ borderWidth: 1 }}>
-          <Text>{item.createdBy}</Text>
-        </View>
+  // function renderItem({ item }) {
+  //   return (
+  //     <View style={{ alignItems: 'center', justifyContent: 'center', height: '10%', flexDirection: 'row' }}>
+  //       <View key={tran.id} style={{ flexDirection: 'row' }}>
 
-      </View>
-    )
-  }
+
+  //         <View style={{ marginHorizontal: '2%' }}>
+  //           <Text>{toDate(tran.createdDate)}</Text>
+  //         </View>
+  //         <View style={{ marginHorizontal: '2%' }}>
+  //           <Text>{tran.resultStatus}</Text>
+  //         </View>
+
+  //         <View style={{ marginHorizontal: '2%' }}>
+  //           <Text>{tran.tagItemNo}</Text>
+  //         </View>
+  //         <View style={{ marginHorizontal: '2%' }}>
+  //           <Text>{tran.locationItemNo}</Text>
+  //         </View>
+  //         <View style={{ marginHorizontal: '2%' }}>
+  //           <Text>{tran.createdBy}</Text>
+  //         </View>
+  //       </View>
+
+  //     </View>
+  //   )
+  // }
 
 
   return (
 
-    <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
       <View style={customStyles.HeaderContainer}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{}}>
@@ -237,7 +278,7 @@ function Scanning({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
-          <TextInput style={{ backgroundColor: 'white' }} ref={Input} returnKeyType={"next"} autoFocus={true} onChangeText={text => { setTemp(text), Input.current.focus() }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
+          <TextInput style={{ backgroundColor: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(),Input.current.focus() }} />
         </View>
         <View style={{ flex: 1 }}></View>
       </View>
@@ -253,42 +294,20 @@ function Scanning({ navigation }) {
         <QRIcon qrData={qrData1} />
         <QRIcon qrData={qrData2} />
         <View style={{
-          flex: 3,
-          backgroundColor: 'white'
+          flex: 6,
+          padding: '2%',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
         >
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{}}>
-              <Text>Date Time</Text>
-            </View>
-            <View style={{}}>
-              <Text>Status</Text>
-            </View>
+          {transac ? <Table height={320} columnWidth={60} columns={DATA} dataSource={transac} /> : <Text>There is no data</Text>}
 
-            <View style={{}}>
-              <Text>Tag Item</Text>
-            </View>
-            <View style={{}}>
-              <Text>Location Item</Text>
-            </View>
-            <View style={{}}>
-              <Text>Scan by</Text>
-            </View>
-          </View>
-          <FlatList
-
-            data={transac}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-          />
 
 
         </View>
-
       </View>
-
       <Footer />
-    </KeyboardAwareScrollView>
+    </KeyboardAvoidingView>
 
   )
 }
@@ -298,3 +317,57 @@ export default Scanning
 {/* < View style = {{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
   <Text>Current Type : {choice.BR}, {choice.SS}</Text>
 </View > */}
+
+{/* <View style={{ borderWidth: 1 }}>
+<Text>{item.qrTag}</Text>
+</View>
+<View style={{ borderWidth: 1 }}>
+<Text>{item.qrLocation}</Text>
+</View> */}
+
+
+// {transac ?
+//   transac.map((tran) => {
+//     return (
+//       <View key={tran.id} style={{ flexDirection: 'row' }}>
+
+
+//         <View style={{ marginHorizontal: '2%' }}>
+//           <Text>{toDate(tran.createdDate)}</Text>
+//         </View>
+//         <View style={{ marginHorizontal: '2%' }}>
+//           <Text>{tran.resultStatus}</Text>
+//         </View>
+
+//         <View style={{ marginHorizontal: '2%' }}>
+//           <Text>{tran.tagItemNo}</Text>
+//         </View>
+//         <View style={{ marginHorizontal: '2%' }}>
+//           <Text>{tran.locationItemNo}</Text>
+//         </View>
+//         <View style={{ marginHorizontal: '2%' }}>
+//           <Text>{tran.createdBy}</Text>
+//         </View>
+//       </View>
+//     )
+//   }) : null}
+
+
+{/* <View style={{ flexDirection: 'row', borderBottomWidth: 2 }}>
+            <View style={{ marginHorizontal: '2%' }}>
+              <Text>Date Time</Text>
+            </View>
+            <View style={{ marginHorizontal: '2%' }}>
+              <Text>Status</Text>
+            </View>
+
+            <View style={{ marginHorizontal: '2%' }}>
+              <Text>Tag Item</Text>
+            </View>
+            <View style={{ marginHorizontal: '2%' }}>
+              <Text>Location Item</Text>
+            </View>
+            <View style={{ marginHorizontal: '2%' }}>
+              <Text>Scan by</Text>
+            </View>
+          </View> */}
