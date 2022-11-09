@@ -26,6 +26,7 @@
     "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "^3.17.0",
     "react-native-simple-table": "^0.0.3",
+    "react-native-sound": "^0.11.2",
     "react-native-sweet-alert-best": "^1.2.0",
     "react-native-vector-icons": "^9.2.0"
   },

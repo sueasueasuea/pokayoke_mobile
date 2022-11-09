@@ -14,10 +14,10 @@ import { DATA } from '../constants/DataHeader'
 import { toDate } from '../helpers/ToDate'
 import Table from 'react-native-simple-table'
 import SweetAlert from 'react-native-sweet-alert-best';
-
-
+import { playSound } from '../helpers/playSound';
 
 function Scanning({ navigation }) {
+
   const { choice } = useChoiceContext()
   const [temp, setTemp] = useState('')
   const { setIsLoading } = useLoadingContext();
@@ -26,8 +26,9 @@ function Scanning({ navigation }) {
   const [qrData2, setQrData2] = useState('waiting to scan...')
   //exp for ItemNoConfig {itemNoLength: 0, locationEndSubstring: 0, locationStartSubstring: 0, tagEndSubstring: 0, tagStartSubstring: 0 }
   const [itemNoConfig, setItemNoConfig] = useState(null)
-  //exp for locationConfig {locationLength: 0,startChar: "w"  }
+
   const [fullLengthQR, setFullLengthQR] = useState(61)
+  const [locationConfig, setLocationConfig] = useState({ startCh: "#", endCh: "#" })
   const { userData } = useAuthContext()
   const [qrData1NoCut, setQr1Nocut] = useState('')
   const [qrData2NoCut, setQr2Nocut] = useState('')
@@ -77,23 +78,29 @@ function Scanning({ navigation }) {
 
   function qrProcess() {
     //location QR
-    //console.log('' + temp.charAt(0) + "wtf :" + fullLengthQR);
+    console.log('temp :' + temp + 'length : ' + temp.length);
+    console.log(temp[0], temp[temp.length - 1]);
     if (temp.length < fullLengthQR) {
+      //check for sure that QR is not null and not undefine
       if (temp) {
-        if (temp.length > 4) {
+
+        if (temp[0] === locationConfig.startCh && temp[temp.length - 1] === locationConfig.endCh) {
+
+          let afterTrim = temp.replace(/#/g, "")
+          setQr2Nocut(afterTrim)
+          setQrData2(afterTrim)
+          console.log('do locationQR mix');
+        }
+        else {
           setQr2Nocut(temp)
           let transQR = transform(temp, "location")
           setQrData2(transQR)
           console.log('do locationQR single');
-        } else {
-          setQr2Nocut(temp)
-          setQrData2(temp)
-          console.log('do locationQR mix');
         }
       }
-
-    } else {
       //tag QR
+    } else if (temp.length == fullLengthQR) {
+
       setQr1Nocut(temp)
       let transQR = transform(temp, "tag")
       setQrData1(transQR)
@@ -144,8 +151,9 @@ function Scanning({ navigation }) {
           "actionType": choice.SS
         })
       console.log(JSON.stringify(data));
-     
+
       if (status === 'NG') {
+        playSound("NG")
         SweetAlert.showAlertWithOptions({
           title: status,
           subTitle: 'ผิด Location',
@@ -157,10 +165,11 @@ function Scanning({ navigation }) {
           callback => console.log('NG from single'));
       }
 
-      else if (status=== 'OK'){
+      else if (status === 'OK') {
+        playSound("OK")
         SweetAlert.showAlertWithOptions({
           title: status,
-          
+
           confirmButtonTitle: 'OK',
           confirmButtonColor: '#000',
           style: 'success',
@@ -168,11 +177,11 @@ function Scanning({ navigation }) {
         },
           callback => console.log('OK from single'));
       }
-        
-      
-    getLastScanned()
-    setQrData1('waiting to scan...')
-    setQrData2('waiting to scan...')
+
+
+      getLastScanned()
+      setQrData1('waiting to scan...')
+      setQrData2('waiting to scan...')
 
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -195,12 +204,19 @@ function Scanning({ navigation }) {
           "actionType": choice.SS
         })
       console.log(JSON.stringify(data));
-      // if (data?.NG) {
-      //   alert(data.NG)
-      // }
-      // if (data?.OK){
-      //   alert(data.OK)
-      // }
+
+      if (data.OK) {
+        playSound("OK")
+        SweetAlert.showAlertWithOptions({
+          title: 'OK',
+          subTitle: '',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'success',
+          cancellable: true
+        },
+          callback => console.log('OK from mix'));
+      }
       getLastScanned()
       setQrData1('waiting to scan...')
       setQrData2('waiting to scan...')
@@ -238,33 +254,7 @@ function Scanning({ navigation }) {
     }
   }
 
-  // function renderItem({ item }) {
-  //   return (
-  //     <View style={{ alignItems: 'center', justifyContent: 'center', height: '10%', flexDirection: 'row' }}>
-  //       <View key={tran.id} style={{ flexDirection: 'row' }}>
 
-
-  //         <View style={{ marginHorizontal: '2%' }}>
-  //           <Text>{toDate(tran.createdDate)}</Text>
-  //         </View>
-  //         <View style={{ marginHorizontal: '2%' }}>
-  //           <Text>{tran.resultStatus}</Text>
-  //         </View>
-
-  //         <View style={{ marginHorizontal: '2%' }}>
-  //           <Text>{tran.tagItemNo}</Text>
-  //         </View>
-  //         <View style={{ marginHorizontal: '2%' }}>
-  //           <Text>{tran.locationItemNo}</Text>
-  //         </View>
-  //         <View style={{ marginHorizontal: '2%' }}>
-  //           <Text>{tran.createdBy}</Text>
-  //         </View>
-  //       </View>
-
-  //     </View>
-  //   )
-  // }
 
 
   return (
@@ -273,14 +263,14 @@ function Scanning({ navigation }) {
       <View style={customStyles.HeaderContainer}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{}}>
-            <Icon name='keyboard-backspace' size={25}>
-            </Icon>
+            <Icon name='keyboard-backspace' size={25} />
+            
           </TouchableOpacity>
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
-          <TextInput style={{ backgroundColor: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(),Input.current.focus() }} />
+          <TextInput style={{ backgroundColor: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
         </View>
-        <View style={{ flex: 1 }}></View>
+        <View style={{ flex: 1 ,justifyContent: 'center' ,alignItems:'center'}}><Text>{choice.SS}</Text></View>
       </View>
       <View style={{
         flex: 8,
@@ -291,8 +281,8 @@ function Scanning({ navigation }) {
 
 
 
-        <QRIcon qrData={qrData1} />
-        <QRIcon qrData={qrData2} />
+        <QRIcon qrData={qrData1} qrName={"Tag"}/>
+        <QRIcon qrData={qrData2} qrName={"Lo"}/>
         <View style={{
           flex: 6,
           padding: '2%',
@@ -313,61 +303,3 @@ function Scanning({ navigation }) {
 }
 
 export default Scanning
-
-{/* < View style = {{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-  <Text>Current Type : {choice.BR}, {choice.SS}</Text>
-</View > */}
-
-{/* <View style={{ borderWidth: 1 }}>
-<Text>{item.qrTag}</Text>
-</View>
-<View style={{ borderWidth: 1 }}>
-<Text>{item.qrLocation}</Text>
-</View> */}
-
-
-// {transac ?
-//   transac.map((tran) => {
-//     return (
-//       <View key={tran.id} style={{ flexDirection: 'row' }}>
-
-
-//         <View style={{ marginHorizontal: '2%' }}>
-//           <Text>{toDate(tran.createdDate)}</Text>
-//         </View>
-//         <View style={{ marginHorizontal: '2%' }}>
-//           <Text>{tran.resultStatus}</Text>
-//         </View>
-
-//         <View style={{ marginHorizontal: '2%' }}>
-//           <Text>{tran.tagItemNo}</Text>
-//         </View>
-//         <View style={{ marginHorizontal: '2%' }}>
-//           <Text>{tran.locationItemNo}</Text>
-//         </View>
-//         <View style={{ marginHorizontal: '2%' }}>
-//           <Text>{tran.createdBy}</Text>
-//         </View>
-//       </View>
-//     )
-//   }) : null}
-
-
-{/* <View style={{ flexDirection: 'row', borderBottomWidth: 2 }}>
-            <View style={{ marginHorizontal: '2%' }}>
-              <Text>Date Time</Text>
-            </View>
-            <View style={{ marginHorizontal: '2%' }}>
-              <Text>Status</Text>
-            </View>
-
-            <View style={{ marginHorizontal: '2%' }}>
-              <Text>Tag Item</Text>
-            </View>
-            <View style={{ marginHorizontal: '2%' }}>
-              <Text>Location Item</Text>
-            </View>
-            <View style={{ marginHorizontal: '2%' }}>
-              <Text>Scan by</Text>
-            </View>
-          </View> */}

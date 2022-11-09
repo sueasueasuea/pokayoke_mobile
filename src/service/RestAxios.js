@@ -1,5 +1,6 @@
 import axios from 'axios';
 import SweetAlert from 'react-native-sweet-alert-best';
+import { playSound } from '../helpers/playSound';
 
 const baseUrl = 'https://asvanmfg02.siamkubota.co.th:444/pokayoke';
 
@@ -20,32 +21,21 @@ instance.interceptors.response.use(function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     //console.log('res'+JSON.stringify(response));
-    // if(response.data.OK)
-    // {
-    //     SweetAlert.showAlertWithOptions({
-    //         title: 'OK',
-    //         subTitle: '',
-    //         confirmButtonTitle: 'OK',
-    //         confirmButtonColor: '#000',
-    //         style: 'success',
-    //         cancellable: true
-    //       },
-    //         callback => console.log('OK from swal'));
-    // }
+    
 
     if(response.data.NG)
     {
+        playSound("NG")
         SweetAlert.showAlertWithOptions({
             title: 'NG',
             subTitle: response.data.NG,
             confirmButtonTitle: 'OK',
             confirmButtonColor: '#000',
-            otherButtonTitle: 'Cancel',
-            otherButtonColor: '#dedede',
+            
             style: 'error',
             cancellable: true
           },
-            callback => console.log('NG from swal'));
+            callback => console.log('NG from mix'));
     }
     return response;
 }, async function (error) {
