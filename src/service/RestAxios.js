@@ -1,8 +1,10 @@
 import axios from 'axios';
 import SweetAlert from 'react-native-sweet-alert-best';
 import { playSound } from '../helpers/playSound';
+import { PROD_REST_API_URL } from '@env'
 
-const baseUrl = 'https://asvanmfg02.siamkubota.co.th:444/pokayoke';
+
+const baseUrl = PROD_REST_API_URL;
 
 const instance = axios.create({
     baseURL: baseUrl,

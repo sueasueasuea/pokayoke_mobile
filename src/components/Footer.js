@@ -6,7 +6,7 @@ function Footer() {
     return (
         <View style={customStyles.footerContainer}>
             
-            <Text style={{ color: 'white' }}>Copyright© 2022 Siam Kubota. All rights reserved.</Text>
+            <Text style={{ ...customStyles.regularTextStyle,color: 'white' }}>Copyright© 2022 Siam Kubota. All rights reserved.</Text>
         </View>
     )
 }

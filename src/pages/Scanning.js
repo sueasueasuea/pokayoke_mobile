@@ -1,4 +1,4 @@
-import { View, TextInput, Text, FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, TextInput, Text, KeyboardAvoidingView, Platform, } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { useChoiceContext } from '../store/ChoiceContext';
 import { customStyles } from '../styles';
@@ -6,19 +6,21 @@ import Footer from '../components/Footer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { RestAxios } from '../service/RestAxios';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import QRIcon from '../components/QRIcon';
 import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext'
 import { DATA } from '../constants/DataHeader'
-import { toDate } from '../helpers/ToDate'
+
 import Table from 'react-native-simple-table'
 import SweetAlert from 'react-native-sweet-alert-best';
 import { playSound } from '../helpers/playSound';
+import { sharpRegex } from '../constants/Regex';
 
 function Scanning({ navigation }) {
 
   const { choice } = useChoiceContext()
+
   const [temp, setTemp] = useState('')
   const { setIsLoading } = useLoadingContext();
   //qrData1 and qrData2 for showing on QrComponent
@@ -77,34 +79,57 @@ function Scanning({ navigation }) {
   }, [qrData1, qrData2])
 
   function qrProcess() {
-    //location QR
+
     console.log('temp :' + temp + 'length : ' + temp.length);
-    console.log(temp[0], temp[temp.length - 1]);
-    if (temp.length < fullLengthQR) {
+    console.log(temp.substring(0, 2) + "");
+    //tag QR
+    if (temp.substring(0, 2) === userData.plant) {
+
+      setQr1Nocut(temp)
+      let transQR = transform(temp, "tag")
+      setQrData1(transQR)
+      console.log('do tagQR');
+      //wrong plant QR
+    } else if (temp.substring(0, 2) === "81" || temp.substring(0, 2) === "95") {
+      playSound("NG")
+      setQrData1('waiting to scan...')
+      setQrData2('waiting to scan...')
+      SweetAlert.showAlertWithOptions({
+        title: "Error",
+        subTitle: 'QR ผิด plant',
+        confirmButtonTitle: 'OK',
+        confirmButtonColor: '#000',
+        style: 'error',
+        cancellable: true
+      },
+        callback => console.log('QR ผิด plant'));
+    }
+
+    //location QR
+    else {
       //check for sure that QR is not null and not undefine
       if (temp) {
+        let count = (temp.match(sharpRegex) || []).length;
+        console.log(count);
+        if (count == 2) {
 
-        if (temp[0] === locationConfig.startCh && temp[temp.length - 1] === locationConfig.endCh) {
-
-          let afterTrim = temp.replace(/#/g, "")
-          setQr2Nocut(afterTrim)
-          setQrData2(afterTrim)
+          let strBtwSharp = temp.substring(
+            temp.indexOf("#") + 1,
+            temp.lastIndexOf("#")
+          );
+          console.log("temp next index of #: " + (temp.indexOf("#") + 1));
+          console.log("temp last index of #: " + temp.lastIndexOf("#"));
+          setQr2Nocut(strBtwSharp)
+          setQrData2(strBtwSharp)
           console.log('do locationQR mix');
         }
-        else {
+        else if (count < 2) {
           setQr2Nocut(temp)
           let transQR = transform(temp, "location")
           setQrData2(transQR)
           console.log('do locationQR single');
         }
       }
-      //tag QR
-    } else if (temp.length == fullLengthQR) {
-
-      setQr1Nocut(temp)
-      let transQR = transform(temp, "tag")
-      setQrData1(transQR)
-      console.log('do tagQR');
     }
 
   }
@@ -242,9 +267,12 @@ function Scanning({ navigation }) {
           }
         })
       console.log(JSON.stringify(data));
-      setTransac(data)
-
-
+      console.log(Object.values(data).length);
+      if (Object.values(data).length == 0) {
+        setTransac(null)
+      } else {
+        setTransac(data)
+      }
 
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -263,14 +291,15 @@ function Scanning({ navigation }) {
       <View style={customStyles.HeaderContainer}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{}}>
-            <Icon name='keyboard-backspace' size={25} />
-            
+            <Icon name='keyboard-backspace' size={25} color={'white'} />
+
           </TouchableOpacity>
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
-          <TextInput style={{ backgroundColor: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
+          <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
         </View>
-        <View style={{ flex: 1 ,justifyContent: 'center' ,alignItems:'center'}}><Text>{choice.SS}</Text></View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{userData.plant}</Text>
+          <Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{choice.SS}</Text></View>
       </View>
       <View style={{
         flex: 8,
@@ -281,8 +310,8 @@ function Scanning({ navigation }) {
 
 
 
-        <QRIcon qrData={qrData1} qrName={"Tag"}/>
-        <QRIcon qrData={qrData2} qrName={"Lo"}/>
+        <QRIcon qrData={qrData1} qrName={"Tag"} />
+        <QRIcon qrData={qrData2} qrName={"Lo"} />
         <View style={{
           flex: 6,
           padding: '2%',
@@ -290,7 +319,7 @@ function Scanning({ navigation }) {
           justifyContent: 'center'
         }}
         >
-          {transac ? <Table height={320} columnWidth={60} columns={DATA} dataSource={transac} /> : <Text>There is no data</Text>}
+          {transac==null ? <Text style={customStyles.regularTextStyle}>There is no data</Text> : <Table height={320} columnWidth={60} columns={DATA} dataSource={transac} />}
 
 
 

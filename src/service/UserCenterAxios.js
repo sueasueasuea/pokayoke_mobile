@@ -1,8 +1,8 @@
 import axios from "axios"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { USER_DB_USERNAME, USER_DB_PASSWORD } from '@env'
+import { USER_DB_USERNAME, USER_DB_PASSWORD,USER_API_URL } from '@env'
 
-const userCenUrl = 'https://p701apsi01-la01skc.azurewebsites.net/skcapi'
+const userCenUrl = USER_API_URL;
 
 const instance = axios.create({
   baseURL: userCenUrl,

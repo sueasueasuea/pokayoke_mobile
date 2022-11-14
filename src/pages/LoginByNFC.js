@@ -3,8 +3,8 @@ import {
   Image,
   Text,
 } from 'react-native'
-import {UserCenterAxios} from '../service/UserCenterAxios'
-
+import { UserCenterAxios } from '../service/UserCenterAxios'
+import { APP_VERSION } from '@env'
 import nfcManager, { NfcEvents } from 'react-native-nfc-manager';
 
 import React, { useState, useEffect } from 'react';
@@ -16,6 +16,7 @@ import { useTokenContext } from '../store/TokenContext';
 import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext';
 import LoadingFullScreen from '../components/Loading';
+import SweetAlert from 'react-native-sweet-alert-best';
 
 
 export default function LoginByNFC({ navigation }) {
@@ -23,7 +24,7 @@ export default function LoginByNFC({ navigation }) {
   const { accessToken, setAccToken } = useTokenContext();
   const { refreshToken, setRefToken } = useTokenContext();
   const { isLoading, setIsLoading } = useLoadingContext();
-  const {userData, setUserData} =useAuthContext();
+  const { userData, setUserData } = useAuthContext();
 
   async function getTokenUserApi() {
 
@@ -32,7 +33,7 @@ export default function LoginByNFC({ navigation }) {
       const { data } = await UserCenterAxios
         .post('/token', {
           "UserName": USER_DB_USERNAME,
-          "Password": USER_DB_PASSWORD 
+          "Password": USER_DB_PASSWORD
         })
       console.log(JSON.stringify(data));
       setAccToken(data.accessToken)
@@ -59,18 +60,43 @@ export default function LoginByNFC({ navigation }) {
         data: {
           "Keyword": `${id}`
         },
+       
       })
       let temp = data[0]
-      if(data.message === "Not found result"){
-
-      }else {
-        console.log('gsfs',data);
+      if (data.message === "Not found result") {
+        // SweetAlert.showAlertWithOptions({
+        //   title: "Error",
+        //   subTitle: 'Not found result!',
+        //   confirmButtonTitle: 'OK',
+        //   confirmButtonColor: '#000',
+        //   style: 'error',
+        //   cancellable: true
+        // },
+        //   callback => console.log('Not found result'));
+      } else {
+        console.log('gsfs', data);
+        SweetAlert.showAlertWithOptions({
+          title: 'OK',
+          subTitle: 'Login success!',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'success',
+          cancellable: true
+        },
+          callback => console.log('Login NFC suc'));
+        let plant_temp = ''
+        if (temp.workAreaID === "SKCA") {
+          plant_temp = "81"
+        }
+        if (temp.workAreaID === "HEA01") {
+          plant_temp = "95"
+        }
         setUserData({
-          empNo:temp.eid,name:`${temp.nameTH} ${temp.lastnameTH}`,img:temp.picture_url
-      },navigation.navigate('Home',{img:temp.picture_url}))
-        
+          empNo: temp.eid, name: `${temp.nameTH} ${temp.lastnameTH}`, img: temp.picture_url, plant: plant_temp
+        }, navigation.navigate('Home', { img: temp.picture_url }))
+
       }
-      
+
       console.log(JSON.stringify(data));
 
 
@@ -78,11 +104,11 @@ export default function LoginByNFC({ navigation }) {
 
     } catch (error) {
       console.log(JSON.stringify(error));
-     
+
     }
     finally {
       setIsLoading(false)
-      
+
     }
   }
 
@@ -117,7 +143,13 @@ export default function LoginByNFC({ navigation }) {
   }, [])
 
   useEffect(() => {
+    // const controller = new AbortController();
+    // const signal = controller.signal;
+
     getProfileUser(nfcData?.id)
+    // return () => {controller.abort()}
+
+
   }, [nfcData])
 
   return (
@@ -144,10 +176,10 @@ export default function LoginByNFC({ navigation }) {
         <Button onPress={() => navigation.navigate('LoginByID')} style={{}} mode='outlined' color='black' titleStyle={customStyles.regularTextStyle} >
           เข้าสู่ระบบด้วยเลขพนักงาน
         </Button>
-        
+
       </View>
       <View style={{ flex: 3, }}>
-
+        
         <Image
           style={{
 
