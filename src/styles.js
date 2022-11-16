@@ -50,7 +50,7 @@ export const customStyles = StyleSheet.create({
         flex: 1,
         backgroundColor: "white",
         flexDirection: 'column',
-        paddingTop: '5%',
+        
     }
 
 

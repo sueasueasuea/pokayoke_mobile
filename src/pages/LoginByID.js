@@ -63,7 +63,7 @@ export default function LoginByID({ navigation }) {
                 }
                 setUserData({
                     empNo: temp.eid, name: `${temp.nameTH} ${temp.lastnameTH}`, img: temp.picture_url, plant: plant_temp
-                }, navigation.navigate('Home', { img: temp.picture_url }))
+                }, navigation.reset({index: 0, routes:[{name :'Home'}]}))
             }
             else {
                 //last 6 digit ID is wrong

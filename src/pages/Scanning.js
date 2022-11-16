@@ -4,7 +4,6 @@ import { useChoiceContext } from '../store/ChoiceContext';
 import { customStyles } from '../styles';
 import Footer from '../components/Footer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { RestAxios } from '../service/RestAxios';
 
 import QRIcon from '../components/QRIcon';
@@ -16,8 +15,10 @@ import Table from 'react-native-simple-table'
 import SweetAlert from 'react-native-sweet-alert-best';
 import { playSound } from '../helpers/playSound';
 import { sharpRegex } from '../constants/Regex';
+import BackButton from '../components/BackButton';
 
-function Scanning({ navigation }) {
+function Scanning() {
+  
 
   const { choice } = useChoiceContext()
 
@@ -290,10 +291,7 @@ function Scanning({ navigation }) {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
       <View style={customStyles.HeaderContainer}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{}}>
-            <Icon name='keyboard-backspace' size={25} color={'white'} />
-
-          </TouchableOpacity>
+          <BackButton/>
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
           <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
@@ -319,7 +317,7 @@ function Scanning({ navigation }) {
           justifyContent: 'center'
         }}
         >
-          {transac==null ? <Text style={customStyles.regularTextStyle}>There is no data</Text> : <Table height={320} columnWidth={60} columns={DATA} dataSource={transac} />}
+          {transac == null ? <Text style={customStyles.regularTextStyle}>There is no data</Text> : <Table height={320} columnWidth={60} columns={DATA} dataSource={transac} />}
 
 
 

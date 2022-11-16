@@ -1,20 +1,38 @@
-import React from 'react'
-import { View, Text, Image,TouchableOpacity } from 'react-native'
+import React,{useEffect} from 'react'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { customStyles } from '../styles'
 import { useAuthContext } from '../store/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useChoiceContext } from '../store/ChoiceContext';
+import SweetAlert from 'react-native-sweet-alert-best';
 
 
+function Header({ navigation }) {
+    const { userData, setUserData } = useAuthContext();
+    const { choice, setChoice } = useChoiceContext()
+    //console.log('img : '+img);
+    console.log('userData.img : ' + userData.img);
+    useEffect(() => {
+      
+    
+      
+    }, [userData])
+    
+    function logout() {
+        setChoice({ SS: '' })
 
-function Header({ img ,navigation}) {
-    const { userData,setUserData } = useAuthContext();
-    const { choice,setChoice } = useChoiceContext()
+        SweetAlert.showAlertWithOptions({
+            title: 'Logout',
+            subTitle: 'คุณต้องการออกจากระบบ?',
+            confirmButtonTitle: 'OK',
+            confirmButtonColor: '#000',
+            otherButtonTitle: 'Close',
+            otherButtonColor: '#dedede',
+            style: 'warning',
+            cancellable: true
+        },
+            callback => { console.log('logout from sweet'), setUserData({ empNo: '', name: '', img: '', plant: '' }), navigation.reset({ index: 0, routes: [{ name: 'LoginByNFC' }] }) });
 
-    function logout () {
-        // setChoice({BR:'',SS:''})
-        // setUserData({empNo:'',name:'',img:''})
-        navigation.navigate('LoginByNFC')
     }
     return (
         <View style={customStyles.HeaderContainer}>
@@ -29,16 +47,16 @@ function Header({ img ,navigation}) {
 
                     }}
 
-                    source={{ uri: img ?? userData.img }}
+                    source={{ uri: userData.img }}
                 />
 
             </View>
             <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', }}>
                 <Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{userData.name}</Text>
             </View>
-            
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',  }}>
-                <TouchableOpacity onPress={()=>{logout()}}><Icon name={'logout'} size={25} color={'white'} /></TouchableOpacity>
+
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                <TouchableOpacity onPress={() => { logout() }}><Icon name={'logout'} size={25} color={'white'} /></TouchableOpacity>
             </View>
         </View>
     )

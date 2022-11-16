@@ -5,14 +5,15 @@ import Header from '../components/Header'
 import Content from '../components/Content'
 import { menus } from '../constants/Menu'
 
+
 export default function Home({route
 ,navigation}) {
-  const {img} = route?.params??"";
+  //const {img} = route?.params??"../assets/images/NotFoundImg.png";
   return (
     <View style={{flex:1}}>
       
       
-      <Header img={img} navigation={navigation}/>
+      <Header  navigation={navigation}/>
       <Content menus={menus} navigation={navigation}/>
       
       <Footer/>

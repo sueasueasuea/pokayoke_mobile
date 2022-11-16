@@ -12,7 +12,7 @@ function Content({ menus, navigation }) {
         if (menus[0].route_name === "Scanning") {
             setChoice({BR:choice.BR,SS:menuName})
             //if next page is supply/store choice,so this should set box or store choice.
-        } else if (menus[0].route_name === "SSChoice") {
+        } else if (menus[0].route_name === "Scanning Choice") {
             setChoice({BR:menuName,SS:choice.SS})
         }
     }

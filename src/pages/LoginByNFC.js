@@ -42,7 +42,7 @@ export default function LoginByNFC({ navigation }) {
 
 
     } catch (error) {
-      console.log(JSON.stringify(error));
+      console.log('NFC error' + error);
     }
     finally {
       setIsLoading(false)
@@ -51,6 +51,10 @@ export default function LoginByNFC({ navigation }) {
   }
 
   async function getProfileUser(id) {
+    console.log('id :' + id);
+    if (!id) {
+      return;
+    }
     try {
       setIsLoading(true)
       const { data } = await UserCenterAxios({
@@ -60,21 +64,21 @@ export default function LoginByNFC({ navigation }) {
         data: {
           "Keyword": `${id}`
         },
-       
+
       })
       let temp = data[0]
       if (data.message === "Not found result") {
-        // SweetAlert.showAlertWithOptions({
-        //   title: "Error",
-        //   subTitle: 'Not found result!',
-        //   confirmButtonTitle: 'OK',
-        //   confirmButtonColor: '#000',
-        //   style: 'error',
-        //   cancellable: true
-        // },
-        //   callback => console.log('Not found result'));
+        SweetAlert.showAlertWithOptions({
+          title: "Error",
+          subTitle: 'Not found result!',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'error',
+          cancellable: true
+        },
+          callback => console.log('Not found result'));
       } else {
-        console.log('gsfs', data);
+        console.log('data from rfid search api ', data);
         SweetAlert.showAlertWithOptions({
           title: 'OK',
           subTitle: 'Login success!',
@@ -91,9 +95,10 @@ export default function LoginByNFC({ navigation }) {
         if (temp.workAreaID === "HEA01") {
           plant_temp = "95"
         }
+        
         setUserData({
           empNo: temp.eid, name: `${temp.nameTH} ${temp.lastnameTH}`, img: temp.picture_url, plant: plant_temp
-        }, navigation.navigate('Home', { img: temp.picture_url }))
+        }, navigation.reset({index: 0, routes:[{name :'Home'}]}))
 
       }
 
@@ -103,7 +108,7 @@ export default function LoginByNFC({ navigation }) {
 
 
     } catch (error) {
-      console.log(JSON.stringify(error));
+      console.log('get Profile error:' + error);
 
     }
     finally {
@@ -120,7 +125,8 @@ export default function LoginByNFC({ navigation }) {
         nfcManager.start();
         nfcManager.registerTagEvent();
       } else {
-        setNfcData('NFC not supported');
+        //setNfcData('NFC not supported');
+        console.log('NFC not Supported');
       }
     })
     nfcManager.unregisterTagEvent();
@@ -155,13 +161,17 @@ export default function LoginByNFC({ navigation }) {
   return (
     <View style={customStyles.loginContainer}>
       <LoadingFullScreen animating={isLoading} text={'waiting...'} />
-      <View style={{ flex: 1, alignItems: 'center', }}>
+      <View style={{ flex: 1, }}>
+        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+          <Text style={{ ...customStyles.regularTextStyle, }}>v {APP_VERSION}</Text>
+        </View>
 
         <Image
           style={{
-            flex: 1,
-            resizeMode: 'contain'
+            flex: 4,
+            resizeMode: 'contain',
 
+            alignSelf: 'center'
           }}
           source={require('../assets/icons/icon.png')}
         />
@@ -179,7 +189,7 @@ export default function LoginByNFC({ navigation }) {
 
       </View>
       <View style={{ flex: 3, }}>
-        
+
         <Image
           style={{
 
