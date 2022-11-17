@@ -1,12 +1,13 @@
 import axios from "axios"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_DB_USERNAME, USER_DB_PASSWORD, USER_API_URL } from '@env'
+import SweetAlert from "react-native-sweet-alert-best";
 
 const userCenUrl = USER_API_URL;
 
 const instance = axios.create({
   baseURL: userCenUrl,
-  timeout: 1000,
+  timeout: 10000,
 
 });
 
@@ -38,7 +39,21 @@ instance.interceptors.response.use(function (response) {
 }, async function (error) {
   // Any status codes that falls outside the range of 2xx cause this function to trigger
   // Do something with response error
+  console.log(JSON.stringify(error));
   const originalConfig = error.config;
+  if (error.code == "ERR_NETWORK")
+  {
+    
+    SweetAlert.showAlertWithOptions({
+      title: "Error",
+      subTitle: 'Network not working',
+      confirmButtonTitle: 'OK',
+      confirmButtonColor: '#000',
+      style: 'error',
+      cancellable: true
+    },
+      callback => console.log('Network not working'));
+  }
   if (error.response) {
     if (error.response.status === 401 && !originalConfig._retry) {
       originalConfig._retry = true;
