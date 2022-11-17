@@ -10,7 +10,7 @@ import Scanning from './src/pages/Scanning';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider as PaperProvider } from 'react-native-paper';
-import TokenContextProvider from './src/store/TokenContext';
+
 import LoadingContextProvider from './src/store/LoadingContext';
 import AuthContextProvider from './src/store/AuthContext';
 import ChoiceContextProvider from './src/store/ChoiceContext';
@@ -21,7 +21,7 @@ export default function App() {
 
 
   return (
-    <TokenContextProvider>
+    
       <LoadingContextProvider>
         <AuthContextProvider>
           <ChoiceContextProvider>
@@ -47,7 +47,7 @@ export default function App() {
           </ChoiceContextProvider>
         </AuthContextProvider>
       </LoadingContextProvider>
-    </TokenContextProvider>
+   
 
   )
 }

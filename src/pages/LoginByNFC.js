@@ -12,7 +12,7 @@ import { customStyles } from '../styles';
 import { Button } from 'react-native-paper';
 
 import { USER_DB_USERNAME, USER_DB_PASSWORD } from '@env'
-import { useTokenContext } from '../store/TokenContext';
+
 import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext';
 import LoadingFullScreen from '../components/Loading';
@@ -21,34 +21,14 @@ import SweetAlert from 'react-native-sweet-alert-best';
 
 export default function LoginByNFC({ navigation }) {
   const [nfcData, setNfcData] = useState();
-  const { accessToken, setAccToken } = useTokenContext();
-  const { refreshToken, setRefToken } = useTokenContext();
+  
+ 
   const { isLoading, setIsLoading } = useLoadingContext();
   const { userData, setUserData } = useAuthContext();
 
-  async function getTokenUserApi() {
+  
 
-    try {
-      setIsLoading(true)
-      const { data } = await UserCenterAxios
-        .post('/token', {
-          "UserName": USER_DB_USERNAME,
-          "Password": USER_DB_PASSWORD
-        })
-      console.log(JSON.stringify(data));
-      setAccToken(data.accessToken)
-      setRefToken(data.refreshToken)
-
-
-
-    } catch (error) {
-      console.log('NFC error' + error);
-    }
-    finally {
-      setIsLoading(false)
-    }
-
-  }
+  
 
   async function getProfileUser(id) {
     console.log('id :' + id);
@@ -142,10 +122,8 @@ export default function LoginByNFC({ navigation }) {
   }, [nfcManager])
 
   useEffect(() => {
-    // fetchToken()
-    // fetchUser()
-    //fetchItemConfig()
-    getTokenUserApi()
+    
+    
   }, [])
 
   useEffect(() => {
