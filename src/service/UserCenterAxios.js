@@ -24,7 +24,7 @@ async function getAccessToken() {
 instance.interceptors.request.use(async (config) => {
 
   const accessToken = await AsyncStorage.getItem('accessToken')
-  console.log('accToken from Async is'+ accessToken);
+  console.log('accToken from Async is :'+ accessToken);
   config.headers.Authorization = 'Bearer ' + accessToken;
   return config;
 

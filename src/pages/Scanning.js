@@ -18,7 +18,7 @@ import { sharpRegex } from '../constants/Regex';
 import BackButton from '../components/BackButton';
 
 function Scanning() {
-  
+
 
   const { choice } = useChoiceContext()
 
@@ -174,7 +174,8 @@ function Scanning() {
           "createdBy": userData.empNo,
           "tagItemNo": qrData1,
           "locationItemNo": qrData2,
-          "actionType": choice.SS
+          "actionType": choice.SS,
+          "plant": userData.plant
         })
       console.log(JSON.stringify(data));
 
@@ -227,7 +228,8 @@ function Scanning() {
           "createdBy": userData.empNo,
           "tagItemNo": qrData1,
           "locationItemNo": qrData2,
-          "actionType": choice.SS
+          "actionType": choice.SS,
+          "plant": userData.plant
         })
       console.log(JSON.stringify(data));
 
@@ -291,7 +293,7 @@ function Scanning() {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
       <View style={customStyles.HeaderContainer}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <BackButton/>
+          <BackButton />
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
           <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
