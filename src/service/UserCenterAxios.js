@@ -7,7 +7,7 @@ const userCenUrl = USER_API_URL;
 
 const instance = axios.create({
   baseURL: userCenUrl,
-  timeout: 10000,
+  timeout: 1000,
 
 });
 

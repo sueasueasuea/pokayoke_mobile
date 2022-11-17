@@ -47,7 +47,7 @@ function Header({ navigation }) {
 
                     }}
 
-                    source={{ uri: userData.img }}
+                    source={{ uri: userData.img!=""?userData.img:null }}
                 />
 
             </View>

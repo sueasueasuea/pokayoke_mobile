@@ -23,20 +23,19 @@ instance.interceptors.response.use(function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     //console.log('res'+JSON.stringify(response));
-    
 
-    if(response.data.NG)
-    {
+
+    if (response.data.NG) {
         playSound("NG")
         SweetAlert.showAlertWithOptions({
             title: 'NG',
             subTitle: response.data.NG,
             confirmButtonTitle: 'OK',
             confirmButtonColor: '#000',
-            
+
             style: 'error',
             cancellable: true
-          },
+        },
             callback => console.log('NG from mix'));
     }
     return response;
@@ -44,12 +43,23 @@ instance.interceptors.response.use(function (response) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     // const originalConfig = err.config;
+    if (error.code == "ERR_NETWORK") {
+
+        SweetAlert.showAlertWithOptions({
+            title: "Error",
+            subTitle: 'Network not working',
+            confirmButtonTitle: 'OK',
+            confirmButtonColor: '#000',
+            style: 'error',
+            cancellable: true
+        },
+            callback => console.log('Network not working'));
+    }
     if (error.response) {
-        if (error.response.status === 400 )
-        {
-            console.log();
+        if (error.response.status === 400) {
+            console.log('400 from internal api');
         }
-        
+
     }
 
     // console.log(JSON.stringify(error));
