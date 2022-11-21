@@ -11,8 +11,6 @@ import React, { useState, useEffect } from 'react';
 import { customStyles } from '../styles';
 import { Button } from 'react-native-paper';
 
-import { USER_DB_USERNAME, USER_DB_PASSWORD } from '@env'
-
 import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext';
 import LoadingFullScreen from '../components/Loading';

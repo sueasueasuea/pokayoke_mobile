@@ -31,8 +31,10 @@ function Header({ navigation }) {
             style: 'warning',
             cancellable: true
         },
-            callback => { console.log('logout from sweet'), setUserData({ empNo: '', name: '', img: '', plant: '' }), navigation.reset({ index: 0, routes: [{ name: 'LoginByNFC' }] }) });
-
+            callback => { console.log('logout from sweet'),
+            setUserData({ empNo: '', name: '', img: '', plant: '' }), navigation.reset({ index: 0, routes: [{ name: 'LoginByNFC' }] })
+        });
+             
     }
     return (
         <View style={customStyles.HeaderContainer}>

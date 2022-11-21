@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useChoiceContext } from '../store/ChoiceContext';
 import { customStyles } from '../styles';
 import Footer from '../components/Footer';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { RestAxios } from '../service/RestAxios';
 
 import QRIcon from '../components/QRIcon';
@@ -91,6 +90,7 @@ function Scanning() {
       setQrData1(transQR)
       console.log('do tagQR');
       //wrong plant QR
+      //I would like to use temp.substring(0, 2) !==userData.plant instead,But it will cause an error,if there is another plant we don't know such as "85"
     } else if (temp.substring(0, 2) === "81" || temp.substring(0, 2) === "95") {
       playSound("NG")
       setQrData1('waiting to scan...')
