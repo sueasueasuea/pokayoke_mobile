@@ -15,18 +15,19 @@ import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext';
 import LoadingFullScreen from '../components/Loading';
 import SweetAlert from 'react-native-sweet-alert-best';
+import { delay } from '../constants/alertTimeout';
 
 
 export default function LoginByNFC({ navigation }) {
   const [nfcData, setNfcData] = useState();
-  
- 
+
+
   const { isLoading, setIsLoading } = useLoadingContext();
   const { userData, setUserData } = useAuthContext();
 
-  
 
-  
+
+
 
   async function getProfileUser(id) {
     console.log('id :' + id);
@@ -55,6 +56,8 @@ export default function LoginByNFC({ navigation }) {
           cancellable: true
         },
           callback => console.log('Not found result'));
+        delay();
+        
       } else {
         console.log('data from rfid search api ', data);
         SweetAlert.showAlertWithOptions({
@@ -66,6 +69,8 @@ export default function LoginByNFC({ navigation }) {
           cancellable: true
         },
           callback => console.log('Login NFC suc'));
+        delay();
+        
         let plant_temp = ''
         if (temp.workAreaID === "SKCA") {
           plant_temp = "81"
@@ -73,10 +78,10 @@ export default function LoginByNFC({ navigation }) {
         if (temp.workAreaID === "HEA01") {
           plant_temp = "95"
         }
-        
+
         setUserData({
           empNo: temp.eid, name: `${temp.nameTH} ${temp.lastnameTH}`, img: temp.picture_url, plant: plant_temp
-        }, navigation.reset({index: 0, routes:[{name :'Home'}]}))
+        }, navigation.reset({ index: 0, routes: [{ name: 'Home' }] }))
 
       }
 
@@ -120,8 +125,8 @@ export default function LoginByNFC({ navigation }) {
   }, [nfcManager])
 
   useEffect(() => {
-    
-    
+
+
   }, [])
 
   useEffect(() => {

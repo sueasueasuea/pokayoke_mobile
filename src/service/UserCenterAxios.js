@@ -2,6 +2,7 @@ import axios from "axios"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_DB_USERNAME, USER_DB_PASSWORD, USER_API_URL } from '@env'
 import SweetAlert from "react-native-sweet-alert-best";
+import { delay } from '../constants/alertTimeout';
 
 const userCenUrl = USER_API_URL;
 
@@ -52,7 +53,9 @@ instance.interceptors.response.use(function (response) {
       cancellable: true
     },
       callback => console.log('Network not working'));
+    delay();
     
+
   }
   if (error.response) {
     if (error.response.status === 401 && !originalConfig._retry) {

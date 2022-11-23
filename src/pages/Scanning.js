@@ -15,6 +15,7 @@ import SweetAlert from 'react-native-sweet-alert-best';
 import { playSound } from '../helpers/playSound';
 import { sharpRegex } from '../constants/Regex';
 import BackButton from '../components/BackButton';
+import { delay } from '../constants/alertTimeout';
 
 function Scanning() {
 
@@ -29,8 +30,8 @@ function Scanning() {
   //exp for ItemNoConfig {itemNoLength: 0, locationEndSubstring: 0, locationStartSubstring: 0, tagEndSubstring: 0, tagStartSubstring: 0 }
   const [itemNoConfig, setItemNoConfig] = useState(null)
 
-  const [fullLengthQR, setFullLengthQR] = useState(61)
-  const [locationConfig, setLocationConfig] = useState({ startCh: "#", endCh: "#" })
+  //const [fullLengthQR, setFullLengthQR] = useState(61)
+  //const [locationConfig, setLocationConfig] = useState({ startCh: "#", endCh: "#" })
   const { userData } = useAuthContext()
   const [qrData1NoCut, setQr1Nocut] = useState('')
   const [qrData2NoCut, setQr2Nocut] = useState('')
@@ -104,6 +105,8 @@ function Scanning() {
         cancellable: true
       },
         callback => console.log('QR ผิด plant'));
+      delay();
+      
     }
 
     //location QR
@@ -190,6 +193,8 @@ function Scanning() {
           cancellable: true
         },
           callback => console.log('NG from single'));
+        delay();
+        
       }
 
       else if (status === 'OK') {
@@ -203,6 +208,8 @@ function Scanning() {
           cancellable: true
         },
           callback => console.log('OK from single'));
+        delay();
+        
       }
 
 
@@ -244,6 +251,8 @@ function Scanning() {
           cancellable: true
         },
           callback => console.log('OK from mix'));
+        delay();
+        
       }
       getLastScanned()
       setQrData1('waiting to scan...')

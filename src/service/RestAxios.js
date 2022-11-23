@@ -2,6 +2,7 @@ import axios from 'axios';
 import SweetAlert from 'react-native-sweet-alert-best';
 import { playSound } from '../helpers/playSound';
 import { PROD_REST_API_URL } from '@env'
+import { delay } from '../constants/alertTimeout';
 
 
 const baseUrl = PROD_REST_API_URL;
@@ -37,6 +38,8 @@ instance.interceptors.response.use(function (response) {
             cancellable: true
         },
             callback => console.log('NG from mix'));
+        delay();
+        
     }
     return response;
 }, async function (error) {
@@ -54,6 +57,8 @@ instance.interceptors.response.use(function (response) {
             cancellable: true
         },
             callback => console.log('Network not working'));
+        delay();
+        
     }
     if (error.response) {
         if (error.response.status === 400) {

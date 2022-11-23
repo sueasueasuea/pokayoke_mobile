@@ -12,6 +12,7 @@ import { UserCenterAxios } from '../service/UserCenterAxios'
 import { useAuthContext } from '../store/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import SweetAlert from 'react-native-sweet-alert-best';
+import { delay } from '../constants/alertTimeout';
 
 
 export default function LoginByID({ navigation }) {
@@ -39,8 +40,10 @@ export default function LoginByID({ navigation }) {
                     confirmButtonColor: '#000',
                     style: 'error',
                     cancellable: true
-                  },
+                },
                     callback => console.log('Not found employee'));
+                delay();
+                
             }
 
             if (temp.personal_Id.substring(7, 13) == trimIdP) {
@@ -54,6 +57,8 @@ export default function LoginByID({ navigation }) {
                     cancellable: true
                 },
                     callback => console.log('Login ID suc'));
+                delay();
+                
                 let plant_temp = ''
                 if (temp.workAreaID === "SKCA") {
                     plant_temp = "81"
@@ -63,7 +68,7 @@ export default function LoginByID({ navigation }) {
                 }
                 setUserData({
                     empNo: temp.eid, name: `${temp.nameTH} ${temp.lastnameTH}`, img: temp.picture_url, plant: plant_temp
-                }, navigation.reset({index: 0, routes:[{name :'Home'}]}))
+                }, navigation.reset({ index: 0, routes: [{ name: 'Home' }] }))
             }
             else {
                 //last 6 digit ID is wrong
@@ -74,8 +79,10 @@ export default function LoginByID({ navigation }) {
                     confirmButtonColor: '#000',
                     style: 'error',
                     cancellable: true
-                  },
+                },
                     callback => console.log('Last 6 digit ID is wrong'));
+                delay();
+                
 
             }
 
