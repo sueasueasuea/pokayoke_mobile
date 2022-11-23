@@ -25,7 +25,7 @@ async function getAccessToken() {
 instance.interceptors.request.use(async (config) => {
 
   const accessToken = await AsyncStorage.getItem('accessToken')
-  console.log('accToken from Async is :'+ accessToken);
+  console.log('accToken from Async is :' + accessToken);
   config.headers.Authorization = 'Bearer ' + accessToken;
   return config;
 
@@ -41,9 +41,8 @@ instance.interceptors.response.use(function (response) {
   // Do something with response error
   console.log(JSON.stringify(error));
   const originalConfig = error.config;
-  if (error.code == "ERR_NETWORK")
-  {
-    
+  if (error.code == "ERR_NETWORK") {
+
     SweetAlert.showAlertWithOptions({
       title: "Error",
       subTitle: 'Network not working',
@@ -53,6 +52,7 @@ instance.interceptors.response.use(function (response) {
       cancellable: true
     },
       callback => console.log('Network not working'));
+    
   }
   if (error.response) {
     if (error.response.status === 401 && !originalConfig._retry) {
