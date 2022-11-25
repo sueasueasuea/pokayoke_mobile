@@ -106,7 +106,7 @@ function Scanning() {
       },
         callback => console.log('QR ผิด plant'));
       delay();
-      
+
     }
 
     //location QR
@@ -194,7 +194,7 @@ function Scanning() {
         },
           callback => console.log('NG from single'));
         delay();
-        
+
       }
 
       else if (status === 'OK') {
@@ -209,7 +209,7 @@ function Scanning() {
         },
           callback => console.log('OK from single'));
         delay();
-        
+
       }
 
 
@@ -252,7 +252,7 @@ function Scanning() {
         },
           callback => console.log('OK from mix'));
         delay();
-        
+
       }
       getLastScanned()
       setQrData1('waiting to scan...')
@@ -305,7 +305,8 @@ function Scanning() {
           <BackButton />
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
-          <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
+          <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} onEndEditing={() => Input.current.focus()}
+            showSoftInputOnFocus={false} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{userData.plant}</Text>
           <Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{choice.SS}</Text></View>
