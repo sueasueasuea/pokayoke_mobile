@@ -17,6 +17,7 @@ import { sharpRegex } from '../constants/Regex';
 import BackButton from '../components/BackButton';
 import { delay } from '../constants/alertTimeout';
 
+
 function Scanning() {
 
 
@@ -43,6 +44,9 @@ function Scanning() {
 
   }, [])
 
+  useEffect(() => {
+    qrProcess()
+  },[temp])
 
   async function getItemNoConfig() {
     try {
@@ -106,7 +110,7 @@ function Scanning() {
       },
         callback => console.log('QR ผิด plant'));
       delay();
-      
+
     }
 
     //location QR
@@ -194,7 +198,7 @@ function Scanning() {
         },
           callback => console.log('NG from single'));
         delay();
-        
+
       }
 
       else if (status === 'OK') {
@@ -209,7 +213,7 @@ function Scanning() {
         },
           callback => console.log('OK from single'));
         delay();
-        
+
       }
 
 
@@ -221,6 +225,7 @@ function Scanning() {
       console.log(JSON.stringify(error));
     }
     finally {
+      setTemp("")
       setIsLoading(false)
     }
   }
@@ -252,7 +257,7 @@ function Scanning() {
         },
           callback => console.log('OK from mix'));
         delay();
-        
+
       }
       getLastScanned()
       setQrData1('waiting to scan...')
@@ -263,6 +268,7 @@ function Scanning() {
 
     }
     finally {
+      setTemp("")
       setIsLoading(false)
     }
   }
@@ -306,7 +312,7 @@ function Scanning() {
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
           <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} onEndEditing={() => Input.current.focus()}
-            showSoftInputOnFocus={false} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} onSubmitEditing={() => { qrProcess(), Input.current.focus() }} />
+            showSoftInputOnFocus={false} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }}  value={""} blurOnSubmit={false} />
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{userData.plant}</Text>
           <Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{choice.SS}</Text></View>
@@ -314,14 +320,13 @@ function Scanning() {
       <View style={{
         flex: 8,
         backgroundColor: "#D1E2C4",
-
-
       }}>
 
 
 
         <QRIcon qrData={qrData1} qrName={"Tag"} />
         <QRIcon qrData={qrData2} qrName={"Lo"} />
+        
         <View style={{
           flex: 6,
           padding: '2%',
