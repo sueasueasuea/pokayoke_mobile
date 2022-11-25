@@ -10,13 +10,12 @@ import { useLoadingContext } from '../store/LoadingContext';
 import { useAuthContext } from '../store/AuthContext'
 import { DATA } from '../constants/DataHeader'
 
-import Table from 'react-native-simple-table'
 import SweetAlert from 'react-native-sweet-alert-best';
 import { playSound } from '../helpers/playSound';
 import { sharpRegex } from '../constants/Regex';
 import BackButton from '../components/BackButton';
 import { delay } from '../constants/alertTimeout';
-
+import MyTable from '../components/MyTable';
 
 function Scanning() {
 
@@ -46,7 +45,7 @@ function Scanning() {
 
   useEffect(() => {
     qrProcess()
-  },[temp])
+  }, [temp])
 
   async function getItemNoConfig() {
     try {
@@ -312,7 +311,7 @@ function Scanning() {
         </View>
         <View style={{ flex: 4, justifyContent: 'center', padding: '2%' }}>
           <TextInput style={{ backgroundColor: 'white', ...customStyles.regularTextStyle, color: 'white' }} onEndEditing={() => Input.current.focus()}
-            showSoftInputOnFocus={false} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }}  value={""} blurOnSubmit={false} />
+            showSoftInputOnFocus={false} ref={Input} autoFocus={true} onChangeText={text => { setTemp(text) }} value={""} blurOnSubmit={false} />
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{userData.plant}</Text>
           <Text style={{ ...customStyles.regularTextStyle, color: 'white' }}>{choice.SS}</Text></View>
@@ -326,19 +325,10 @@ function Scanning() {
 
         <QRIcon qrData={qrData1} qrName={"Tag"} />
         <QRIcon qrData={qrData2} qrName={"Lo"} />
-        
-        <View style={{
-          flex: 6,
-          padding: '2%',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-        >
-          {transac == null ? <Text style={customStyles.regularTextStyle}>There is no data</Text> : <Table height={320} columnWidth={60} columns={DATA} dataSource={transac} />}
-
-
-
+        <View style={{ flex: 6 }}>
+          <MyTable data={transac} DATA={DATA} />
         </View>
+
       </View>
       <Footer />
     </KeyboardAvoidingView>
