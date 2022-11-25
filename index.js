@@ -50,7 +50,7 @@ var profileConfig = {
   
     "APP_LIST": [{
   
-      "PACKAGE_NAME": "com.pokayoke_mobile.MainActivity",
+      "PACKAGE_NAME": "com.pokayoke_mobile",
   
       "ACTIVITY_LIST": ["*"]
   
