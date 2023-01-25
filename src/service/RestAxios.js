@@ -9,7 +9,7 @@ const baseUrl = PROD_REST_API_URL;
 
 const instance = axios.create({
     baseURL: baseUrl,
-    timeout: 1000,
+    timeout: 3000,
 
 });
 
@@ -39,35 +39,73 @@ instance.interceptors.response.use(function (response) {
         },
             callback => console.log('NG from mix'));
         delay();
-        
+
     }
     return response;
 }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     // const originalConfig = err.config;
-    if (error.code == "ERR_NETWORK") {
-
+    if (error.response) {
         SweetAlert.showAlertWithOptions({
             title: "Error",
-            subTitle: 'Network not working',
+            subTitle: error.response.status.toString(),
             confirmButtonTitle: 'OK',
             confirmButtonColor: '#000',
             style: 'error',
             cancellable: true
         },
-            callback => console.log('Network not working'));
-        delay();
+            callback => console.log(error.response.status.toString()));
         
+
     }
-    if (error.response) {
-        if (error.response.status === 400) {
-            console.log('400 from internal api');
+    else if (error.code) {
+        console.log(error.code)
+        if (error.code == "ERR_NETWORK") {
+
+            SweetAlert.showAlertWithOptions({
+                title: "Error",
+                subTitle: 'Network not working',
+                confirmButtonTitle: 'OK',
+                confirmButtonColor: '#000',
+                style: 'error',
+                cancellable: true
+            },
+                callback => console.log('Network not working'));
+            delay();
+
         }
-
+        else if (error.code == "ECONNABORTED") {
+            SweetAlert.showAlertWithOptions({
+                title: "Error",
+                subTitle: 'Request timeout',
+                confirmButtonTitle: 'OK',
+                confirmButtonColor: '#000',
+                style: 'error',
+                cancellable: true
+            },
+                callback => console.log('Request timeout'));
+            
+        }
+        else {
+            SweetAlert.showAlertWithOptions({
+                title: "Error",
+                subTitle: error.code.toString(),
+                confirmButtonTitle: 'OK',
+                confirmButtonColor: '#000',
+                style: 'error',
+                cancellable: true
+            },
+                callback => console.log(error.code.toString()));
+            
+        }
     }
 
-    // console.log(JSON.stringify(error));
+
+
+
+
+
     return Promise.reject(error);
 });
 
