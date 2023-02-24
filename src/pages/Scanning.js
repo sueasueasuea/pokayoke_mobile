@@ -93,25 +93,41 @@ function Scanning() {
       let transQR = transform(temp, "tag")
       setQrData1(transQR)
       console.log('do tagQR');
-      //wrong plant QR
-      //I would like to use temp.substring(0, 2) !==userData.plant instead,But it will cause an error,if there is another plant we don't know such as "85"
-    } else if (temp.substring(0, 2) === "81" || temp.substring(0, 2) === "95") {
-      playSound("NG")
-      setQrData1('waiting to scan...')
-      setQrData2('waiting to scan...')
-      SweetAlert.showAlertWithOptions({
-        title: "Error",
-        subTitle: 'QR ผิด plant',
-        confirmButtonTitle: 'OK',
-        confirmButtonColor: '#000',
-        style: 'error',
-        cancellable: true
-      },
-        callback => console.log('QR ผิด plant'));
-      delay();
-
+      //wrong plant or plant not exist
+    } else if (temp.substring(0, 2) !== userData.plant) {
+      //plant in QR don't match user plant but it exist.
+      if (temp.substring(0, 2) === "81" || temp.substring(0, 2) === "95") {
+        playSound("NG")
+        setQrData1('waiting to scan...')
+        setQrData2('waiting to scan...')
+        SweetAlert.showAlertWithOptions({
+          title: "Error",
+          subTitle: 'QR ผิด plant',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'error',
+          cancellable: true
+        },
+          callback => console.log('QR ผิด plant'));
+        delay();
+      }
+      // plant in QR not exist
+      else {
+        playSound("NG")
+        setQrData1('waiting to scan...')
+        setQrData2('waiting to scan...')
+        SweetAlert.showAlertWithOptions({
+          title: "Error",
+          subTitle: 'Plant ใน QR ไม่มีอยู่จริง',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'error',
+          cancellable: true
+        },
+          callback => console.log('Plant ใน QR ไม่มีอยู่จริง'));
+        delay();
+      }
     }
-
     //location QR
     else {
       //check for sure that QR is not null and not undefine
